@@ -1,6 +1,12 @@
 const endpoint = 'https://api.quotable.io/random';
 const displayQuotes = document.querySelector("#quote");
 const displayAuthor = document.querySelector("#author")
+const quoteArr = [];
+const previousBtn = document.querySelector("#back-btn")
+const nextBtn = document.querySelector("#next-btn")
+let currentIndex;
+const arrLength = quoteArr.length
+
 
 
 async function fetchQuotes(){
@@ -11,9 +17,10 @@ async function fetchQuotes(){
             }
         });
     const quotesData = await response.json();
-    console.table(quotesData);
     const {content, author} = quotesData;
-    
+    quoteArr.push({content, author})
+    currentIndex = quoteArr.length - 1
+    console.log(currentIndex)
     displayQuotes.textContent = `${content}`;
     displayAuthor.textContent = `~${author}`;
      
@@ -23,7 +30,29 @@ async function fetchQuotes(){
     
 }
 
+function getPreviousQuote(){
+if(currentIndex > 0){
+    displayQuotes.textContent = quoteArr[currentIndex -1].content;
+    displayAuthor.textContent = quoteArr[currentIndex -1].author;
+    currentIndex-=1;
+}else{
+  return console.log("No previous quotes");
+}
+
+}
 
 fetchQuotes()
 
+function displayNext(){
+    if(currentIndex !== (quoteArr.length -1)){
+displayQuotes.textContent = quoteArr[currentIndex + 1].content;
+displayAuthor.textContent = quoteArr[currentIndex + 1].author;
+currentIndex += 1;
+    }else{
+        fetchQuotes()
+    }
 
+}
+
+nextBtn.addEventListener("click", displayNext)
+previousBtn.addEventListener("click", getPreviousQuote)
